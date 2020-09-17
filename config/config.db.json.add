@@ -1,0 +1,26 @@
+{
+    "gcp_billing_account_id": "XXXXXX-XXXXXX-XXXXXX",
+    "gcp_project_name": "pip Templates 1",
+
+    "mongodb_deployment_name": "pip-templates-mongodb",
+    "mongodb_allowed_ips": "168.2.10.0/32,10.58.0.0/24",
+    "mongodb_zone": "us-east1-b",
+    "mongodb_rs_name": "pip-templates-rs",
+    "mongodb_servers_count": 2,
+    "mongodb_servers_machine_type": "g1-small",
+    "mongodb_servers_machine_boot_disk_type": "pd-standard",
+    "mongodb_servers_machine_boot_disk_size": 10,
+    "mongodb_servers_machine_disk_type": "pd-standard",
+    "mongodb_servers_machine_disk_size": 1000,
+    "mongodb_servers_network": "default",
+    "mongodb_servers_subnetwork": "default",
+    "mongodb_servers_subnetwork_region": "us-east1",
+
+    "mongodb_arbiters_count": 1,
+    "mongodb_arbiters_machine_type": "n1-standard-1",
+    "mongodb_arbiters_machine_boot_disk_type": "pd-standard",
+    "mongodb_arbiters_machine_boot_disk_size": 10,
+    "mongodb_arbiters_network": "default",
+    "mongodb_arbiters_subnetwork": "default",
+    "mongodb_arbiters_subnetwork_region": "us-east1"
+}

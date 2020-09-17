@@ -1,0 +1,98 @@
+{% import "path_utils.jinja" as path_utils with context %}
+
+{% set allTiersCount = 2 %}
+{% set tiersWithNoExternalIPCount = 0 %}
+{% set servers_externalIPs = properties["servers_externalIP"] %}
+{% if servers_externalIPs and servers_externalIPs[0] == "NONE" %}
+{% set tiersWithNoExternalIPCount = tiersWithNoExternalIPCount + 1 %}
+{% endif %}
+{% set servers_mainNetwork = path_utils.networkPath(properties["servers_network"][0]) %}
+{% set arbiters_externalIPs = properties["arbiters_externalIP"] %}
+{% if arbiters_externalIPs and arbiters_externalIPs[0] == "NONE" %}
+{% set tiersWithNoExternalIPCount = tiersWithNoExternalIPCount + 1 %}
+{% endif %}
+{% set arbiters_mainNetwork = path_utils.networkPath(properties["arbiters_network"][0]) %}
+
+resources:
+  - name: servers-tier
+    type: servers_tier.jinja
+    properties:
+      instanceCount: {{ properties["servers_instanceCount"] }}
+      zone: {{ properties["zone"] }}
+      network: {{ properties["servers_network"] }}
+      {% if properties.get("servers_subnetwork") %}
+      subnetwork: {{ properties["servers_subnetwork"] }}
+      {% endif %}
+      {% if properties.get("servers_externalIP") %}
+      externalIP: {{ properties["servers_externalIP"] }}
+      {% endif %}
+      machineType: {{ properties["servers_machineType"] }}
+      bootDiskType: {{ properties["servers_bootDiskType"] }}
+      bootDiskSizeGb: {{ properties["servers_bootDiskSizeGb"] }}
+      input_replicaSetName: |-
+        {{ properties["input_replicaSetName"] }}
+      servers_instanceCount: {{ properties["servers_instanceCount"] }}
+      arbiters_instanceCount: {{ properties["arbiters_instanceCount"] }}
+      servers_disk1_type: {{ properties["servers_disk1_type"] }}
+      servers_disk1_sizeGb: {{ properties["servers_disk1_sizeGb"] }}
+  - name: arbiters-tier
+    type: arbiters_tier.jinja
+    properties:
+      instanceCount: {{ properties["arbiters_instanceCount"] }}
+      zone: {{ properties["zone"] }}
+      network: {{ properties["arbiters_network"] }}
+      {% if properties.get("arbiters_subnetwork") %}
+      subnetwork: {{ properties["arbiters_subnetwork"] }}
+      {% endif %}
+      {% if properties.get("arbiters_externalIP") %}
+      externalIP: {{ properties["arbiters_externalIP"] }}
+      {% endif %}
+      machineType: {{ properties["arbiters_machineType"] }}
+      bootDiskType: {{ properties["arbiters_bootDiskType"] }}
+      bootDiskSizeGb: {{ properties["arbiters_bootDiskSizeGb"] }}
+      input_replicaSetName: |-
+        {{ properties["input_replicaSetName"] }}
+      servers_instanceCount: {{ properties["servers_instanceCount"] }}
+      arbiters_instanceCount: {{ properties["arbiters_instanceCount"] }}
+
+outputs:
+  - name: deployment
+    value: {{ env["deployment"] }}
+  - name: project
+    value: {{ env["project"] }}
+  {% for vmIndex in range(properties["servers_instanceCount"]) %}
+  - name: servers_vmId{{ vmIndex }}
+    value: $(ref.servers-tier.vmId{{ vmIndex }})
+  - name: servers_vmExternalIP{{ vmIndex }}
+    value: $(ref.servers-tier.vmExternalIP{{ vmIndex }})
+  - name: servers_vmInternalIP{{ vmIndex }}
+    value: $(ref.servers-tier.vmInternalIP{{ vmIndex }})
+  - name: servers_vmName{{ vmIndex }}
+    value: $(ref.servers-tier.vmName{{ vmIndex }})
+  - name: servers_vmSelfLink{{ vmIndex }}
+    value: $(ref.servers-tier.vmSelfLink{{ vmIndex }})
+  {% endfor %}
+  - name: servers_mainNetwork
+    value: {{ servers_mainNetwork }}
+  {% for vmIndex in range(properties["arbiters_instanceCount"]) %}
+  - name: arbiters_vmId{{ vmIndex }}
+    value: $(ref.arbiters-tier.vmId{{ vmIndex }})
+  - name: arbiters_vmExternalIP{{ vmIndex }}
+    value: $(ref.arbiters-tier.vmExternalIP{{ vmIndex }})
+  - name: arbiters_vmInternalIP{{ vmIndex }}
+    value: $(ref.arbiters-tier.vmInternalIP{{ vmIndex }})
+  - name: arbiters_vmName{{ vmIndex }}
+    value: $(ref.arbiters-tier.vmName{{ vmIndex }})
+  - name: arbiters_vmSelfLink{{ vmIndex }}
+    value: $(ref.arbiters-tier.vmSelfLink{{ vmIndex }})
+  {% endfor %}
+  - name: arbiters_mainNetwork
+    value: {{ arbiters_mainNetwork }}
+  - name: tiersWithNoExternalIPStatus
+    {% if tiersWithNoExternalIPCount == 0 %}
+    value: 'NONE'
+    {% elif tiersWithNoExternalIPCount < allTiersCount %}
+    value: 'SOME'
+    {% else %}
+    value: 'ALL'
+    {% endif %}

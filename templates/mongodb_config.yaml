@@ -1,0 +1,78 @@
+{
+  "imports": [
+    {
+      "path": "../templates/gcp_mongodb_import/mongodb.jinja",
+      "name": "mongodb.jinja"
+    },
+    {
+      "path": "../templates/gcp_mongodb_import/path_utils.jinja",
+      "name": "path_utils.jinja"
+    },
+    {
+      "path": "../templates/gcp_mongodb_import/arbiters_tier.jinja",
+      "name": "arbiters_tier.jinja"
+    },
+    {
+      "path": "../templates/gcp_mongodb_import/servers_tier.jinja",
+      "name": "servers_tier.jinja"
+    },
+    {
+      "path": "../templates/gcp_mongodb_import/common.py",
+      "name": "common.py"
+    },
+    {
+      "path": "../templates/gcp_mongodb_import/default.py",
+      "name": "default.py"
+    },
+    {
+      "path": "../templates/gcp_mongodb_import/software_status.py",
+      "name": "software_status.py"
+    },
+    {
+      "path": "../templates/gcp_mongodb_import/software_status_script.py",
+      "name": "software_status_script.py"
+    },
+    {
+      "path": "../templates/gcp_mongodb_import/vm_instance.py",
+      "name": "vm_instance.py"
+    }
+  ],
+  "resources": [
+    {
+      "name": "mongodb",
+      "type": "mongodb.jinja",
+      "properties": {
+        "zone": "<%=mongodb_zone%>",
+        "input_replicaSetName": "<%=mongodb_rs_name%>",
+        "servers_instanceCount": <%=mongodb_servers_count%>,
+        "servers_machineType": "<%=mongodb_servers_machine_type%>",
+        "servers_bootDiskType": "<%=mongodb_servers_machine_boot_disk_type%>",
+        "servers_bootDiskSizeGb": <%=mongodb_servers_machine_boot_disk_size%>,
+        "servers_disk1_type": "<%=mongodb_servers_machine_disk_type%>",
+        "servers_disk1_sizeGb": <%=mongodb_servers_machine_disk_size%>,
+        "servers_network": [
+          "https://www.googleapis.com/compute/v1/projects/<%=gcp_project_id%>/global/networks/<%=mongodb_servers_network%>"
+        ],
+        "servers_subnetwork": [
+          "https://www.googleapis.com/compute/v1/projects/<%=gcp_project_id%>/regions/<%=mongodb_servers_subnetwork_region%>/subnetworks/<%=mongodb_servers_subnetwork%>"
+        ],
+        "servers_externalIP": [
+          "EPHEMERAL"
+        ],
+        "arbiters_instanceCount": <%=mongodb_arbiters_count%>,
+        "arbiters_machineType": "<%=mongodb_arbiters_machine_type%>",
+        "arbiters_bootDiskType": "<%=mongodb_arbiters_machine_boot_disk_type%>",
+        "arbiters_bootDiskSizeGb": <%=mongodb_arbiters_machine_boot_disk_size%>,
+        "arbiters_network": [
+          "https://www.googleapis.com/compute/v1/projects/<%=gcp_project_id%>/global/networks/<%=mongodb_arbiters_network%>"
+        ],
+        "arbiters_subnetwork": [
+          "https://www.googleapis.com/compute/v1/projects/<%=gcp_project_id%>/regions/<%=mongodb_arbiters_subnetwork_region%>/subnetworks/<%=mongodb_arbiters_subnetwork%>"
+        ],
+        "arbiters_externalIP": [
+          "EPHEMERAL"
+        ]
+      }
+    }
+  ]
+}
